@@ -9,9 +9,29 @@ public class Day1Task1Main {
 
 	public static void main(String[] args) {
 		try {
-			List<Integer> startValues = AdventUtils.getIntegerInput(1);
+			List<String> calories = AdventUtils.getStringInput(1);
 
-			AdventUtils.publishResult(1, 1, null);
+			int max = 0;
+			int cur = 0;
+
+			for (String cal : calories) {
+
+				if (cal.isBlank()) {
+					if (max < cur) {
+						max = cur;
+					}
+
+					cur = 0;
+				} else {
+					cur += Integer.parseInt(cal);
+				}
+			}
+			
+			if (max < cur) {
+				max = cur;
+			}
+
+			AdventUtils.publishResult(1, 1, max);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
