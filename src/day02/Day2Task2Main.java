@@ -1,7 +1,6 @@
 package day02;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import util.AdventUtils;
