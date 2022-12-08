@@ -2,16 +2,18 @@ package day08;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 
 import util.AdventUtils;
+import util.grid.array.GridUtils;
 
 public class Day8Task1Main {
 
 	public static void main(String[] args) {
 		try {
 			List<String> raw = AdventUtils.getStringInput(8);
-
-			char[][] grid = toGrid(raw);
+			
+			Character[][] grid = GridUtils.toGrid(raw, Function.identity());
 
 			int visible = 0;
 

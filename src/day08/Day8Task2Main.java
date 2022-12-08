@@ -2,8 +2,10 @@ package day08;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 
 import util.AdventUtils;
+import util.grid.array.GridUtils;
 
 public class Day8Task2Main {
 
@@ -11,7 +13,7 @@ public class Day8Task2Main {
 		try {
 			List<String> raw = AdventUtils.getStringInput(8);
 
-			char[][] grid = toGrid(raw);
+			Character[][] grid = GridUtils.toGrid(raw, Function.identity());
 
 			int highestScenicScore = 0;
 
