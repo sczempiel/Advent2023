@@ -9,29 +9,34 @@ public class Day1Task1Main {
 
 	public static void main(String[] args) {
 		try {
-			List<String> calories = AdventUtils.getStringInput(1);
+			List<String> calibrations = AdventUtils.getStringInput(1);
 
-			int max = 0;
-			int cur = 0;
+			int result = 0;
 
-			for (String cal : calories) {
+			for (String cal : calibrations) {
+				char[] chars = cal.toCharArray();
 
-				if (cal.isBlank()) {
-					if (max < cur) {
-						max = cur;
+				Character first = null;
+				for (char element : chars) {
+					first = element;
+					if (Character.isDigit(first)) {
+						break;
 					}
-
-					cur = 0;
-				} else {
-					cur += Integer.parseInt(cal);
 				}
-			}
-			
-			if (max < cur) {
-				max = cur;
+
+				Character last = null;
+				for (int i = chars.length - 1; i >= 0; i--) {
+					last = chars[i];
+					if (Character.isDigit(last)) {
+						break;
+					}
+				}
+
+				result += Integer.valueOf(String.valueOf(first) + String.valueOf(last));
+
 			}
 
-			AdventUtils.publishResult(1, 1, max);
+			AdventUtils.publishResult(1, 1, result);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
