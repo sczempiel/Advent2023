@@ -1,6 +1,5 @@
 package day01;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -13,22 +12,18 @@ import util.Tuple;
 public class Day1Task2Main {
 
 	public static void main(String[] args) {
-		try {
-			List<String> calibrations = AdventUtils.getStringInput(1);
+		List<String> calibrations = AdventUtils.getStringInput(1);
 
-			int result = 0;
+		int result = 0;
 
-			for (String cal : calibrations) {
-				int first = findDigit(cal::indexOf, (t1, t2) -> t1 < t2);
-				int last = findDigit(cal::lastIndexOf, (t1, t2) -> t1 > t2);
+		for (String cal : calibrations) {
+			int first = findDigit(cal::indexOf, (t1, t2) -> t1 < t2);
+			int last = findDigit(cal::lastIndexOf, (t1, t2) -> t1 > t2);
 
-				result += Integer.valueOf(String.valueOf(first) + String.valueOf(last));
-			}
-
-			AdventUtils.publishResult(1, 2, result);
-		} catch (IOException e) {
-			e.printStackTrace();
+			result += Integer.valueOf(String.valueOf(first) + String.valueOf(last));
 		}
+
+		AdventUtils.publishResult(1, 2, result);
 	}
 
 	private static int findDigit(Function<String, Integer> indexFinder, BiPredicate<Integer, Integer> comparator) {

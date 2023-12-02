@@ -7,18 +7,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Formatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AdventUtils {
@@ -26,72 +21,59 @@ public class AdventUtils {
 	private static final String RESULT_FILE_FORMAT = "result_task%d.txt";
 	private static final String INPUT_FILE_FORMAT = "day%s/input.txt";
 
-	private static Map<Integer, List<String>> inputs = new HashMap<>();
-
 	private AdventUtils() {
 
 	}
 
-	public static void publishResult(int day, int task, int result) throws IOException {
+	public static void publishResult(int day, int task, int result) {
 		publishResult(day, task, String.valueOf(result));
 	}
 
-	public static void publishResult(int day, int task, long result) throws IOException {
+	public static void publishResult(int day, int task, long result) {
 		publishResult(day, task, String.valueOf(result));
 	}
 
-	public static void publishResult(int day, int task, String result) throws IOException {
+	public static void publishResult(int day, int task, String result) {
 		System.out.println(result);
 		writeResult(day, task, result);
 	}
 
-	public static void writeResult(int day, int task, String result) throws IOException {
+	public static void writeResult(int day, int task, String result) {
 		writeFile(result, getResultFilePath(day, task));
 	}
 
-	public static void publishExtra(int day, int task, String result, String extraName) throws IOException {
+	public static void publishExtra(int day, int task, String result, String extraName) {
 		System.out.println(result);
 		writeExtra(day, task, result, extraName);
 	}
 
-	public static void writeExtra(int day, int task, String result, String extraName) throws IOException {
+	public static void writeExtra(int day, int task, String result, String extraName) {
 		writeFile(result, getExtraFilePath(day, task, extraName));
 	}
 
-	public static void eraseExtraFile(int day, int task, String extraName) throws IOException {
+	public static void eraseExtraFile(int day, int task, String extraName) {
 		writeExtra(day, task, "", extraName);
 	}
 
-	public static void writeNewExtraLine(int day, int task, String result, String extraName) throws IOException {
-		Writer w = null;
-		try {
-			w = new BufferedWriter(new FileWriter(new File(getExtraFilePath(day, task, extraName)), true));
+	public static void writeNewExtraLine(int day, int task, String result, String extraName) {
+		try (Writer w = new BufferedWriter(new FileWriter(new File(getExtraFilePath(day, task, extraName)), true))) {
 			w.write(result);
 			w.write("\n");
-		} finally {
-			if (w != null) {
-				w.close();
-			}
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 
-	public static void publishNewExtraLine(int day, int task, String result, String extraName) throws IOException {
+	public static void publishNewExtraLine(int day, int task, String result, String extraName) {
 		System.out.println(result);
 		writeNewExtraLine(day, task, result, extraName);
 	}
 
-	private static void writeFile(String result, String filePath) throws IOException {
-		OutputStream out = null;
-		Writer w = null;
-
-		try {
-			out = new FileOutputStream(filePath);
-			w = new OutputStreamWriter(out);
+	private static void writeFile(String result, String filePath) {
+		try (Writer w = new OutputStreamWriter(new FileOutputStream(filePath))) {
 			w.write(result);
-		} finally {
-			if (w != null) {
-				w.close();
-			}
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -121,45 +103,28 @@ public class AdventUtils {
 		return path + sb.toString();
 	}
 
-	public static BufferedReader getBufferedReader(int day) throws IOException {
-		InputStream in = null;
-		Reader r = null;
+	public static List<Integer> getIntegerInput(int day) {
+		List<Integer> input = getStringInput(day).stream().map(Integer::valueOf).collect(Collectors.toList());
+		return Collections.unmodifiableList(input);
+	}
 
+	public static List<Long> getLongInput(int day) {
+		List<Long> input = getStringInput(day).stream().map(Long::valueOf).collect(Collectors.toList());
+		return Collections.unmodifiableList(input);
+	}
+
+	public static List<String> getStringInput(int day) {
 		URL url = AdventUtils.class.getResource("../" + AdventUtils.getInputFileName(day));
-		in = new FileInputStream(url.getPath().replaceAll("/bin/", "/src/"));
-		r = new InputStreamReader(in);
-		return new BufferedReader(r);
-	}
 
-	public static List<Integer> getIntegerInput(int day) throws IOException {
-		List<Integer> input = getStringInput(day).stream().map(line -> Integer.valueOf(line))
-				.collect(Collectors.toList());
-		input = Collections.unmodifiableList(input);
-		return input;
-	}
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(new FileInputStream(url.getPath().replaceAll("/bin/", "/src/"))))) {
 
-	public static List<Long> getLongInput(int day) throws IOException {
-		List<Long> input = getStringInput(day).stream().map(line -> Long.valueOf(line)).collect(Collectors.toList());
-		input = Collections.unmodifiableList(input);
-		return input;
-	}
+			List<String> result = br.lines().collect(Collectors.toList());
+			return Collections.unmodifiableList(result);
 
-	public static List<String> getStringInput(int day) throws IOException {
-		List<String> input = inputs.get(day);
-		if (input == null) {
-			BufferedReader br = null;
-			try {
-				br = getBufferedReader(day);
-				List<String> result = br.lines().collect(Collectors.toList());
-				input = Collections.unmodifiableList(result);
-				inputs.put(day, input);
-			} finally {
-				if (br != null) {
-					br.close();
-				}
-			}
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
 		}
-		return input;
 	}
 
 	private static String getInputFileName(int day) {

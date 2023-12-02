@@ -1,59 +1,50 @@
 package day02;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import util.AdventUtils;
 
 public class Day2Task2Main {
 
 	public static void main(String[] args) {
-		try {
-			List<String> rounds = AdventUtils.getStringInput(2);
+		int result = AdventUtils.getStringInput(2).stream().mapToInt(s -> {
 
-			long sum = 0;
+			int maxRed = 0;
+			int maxGreen = 0;
+			int maxBlue = 0;
 
-			for (String round : rounds) {
-				String[] plays = round.split(" ");
+			for (String r : s.split(";")) {
 
-				long them = plays[0].charAt(0) - 'A' + 1;
+				int red = colorCounter("red", r);
+				int green = colorCounter("green", r);
+				int blue = colorCounter("blue", r);
 
-				long points = points(them, plays[1].charAt(0));
-
-				sum += points;
+				if (red > maxRed) {
+					maxRed = red;
+				}
+				if (green > maxGreen) {
+					maxGreen = green;
+				}
+				if (blue > maxBlue) {
+					maxBlue = blue;
+				}
 			}
 
-			AdventUtils.publishResult(2, 2, sum);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			return maxRed * maxGreen * maxBlue;
+		}).sum();
+
+		AdventUtils.publishResult(2, 2, result);
 	}
 
-	private static long points(long them, long result) {
-		if (result == 'X') {
-			if (them == 1) {
-				return 3;
-			} else if (them == 2) {
-				return 1;
-			} else {
-				return 2;
-			}
+	private static int colorCounter(String color, String game) {
+		int count = 0;
+		Matcher matcher = Pattern.compile("(\\d+) " + color).matcher(game);
+		while (matcher.find()) {
+			count += Integer.valueOf(matcher.group(1));
 		}
 
-		if (result == 'Y') {
-			return 3 + them;
-		}
-
-		if (result == 'Z') {
-			if (them == 1) {
-				return 6 + 2;
-			} else if (them == 2) {
-				return 6 + 3;
-			} else {
-				return 6 + 1;
-			}
-		}
-
-		throw new IllegalStateException();
+		return count;
 	}
+
 }

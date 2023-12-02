@@ -1,66 +1,44 @@
 package day02;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import util.AdventUtils;
 
 public class Day2Task1Main {
 
 	public static void main(String[] args) {
-		try {
-			List<String> rounds = AdventUtils.getStringInput(2);
+		int result = AdventUtils.getStringInput(2).stream().mapToInt(s -> {
+			Matcher matcherGame = Pattern.compile("Game (\\d+)").matcher(s);
+			matcherGame.find();
 
-			long sum = 0;
+			Integer game = Integer.valueOf(matcherGame.group(1));
 
-			for (String round : rounds) {
-				String[] plays = round.split(" ");
+			for (String r : s.split(";")) {
 
-				long them = plays[0].charAt(0) - 'A' + 1;
-				long me = plays[1].charAt(0) - 'X' + 1;
+				int red = colorCounter("red", r);
+				int blue = colorCounter("blue", r);
+				int green = colorCounter("green", r);
 
-				long result = result(them, me);
-				System.out.println(String.format("%s (%d) %s (%d) => %d", plays[0], them, plays[1], me, result));
-
-				sum += result;
+				if (red > 12 || green > 13 || blue > 14) {
+					return 0;
+				}
 			}
 
-			AdventUtils.publishResult(2, 1, sum);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			return game;
+		}).sum();
+
+		AdventUtils.publishResult(2, 1, result);
 	}
 
-	private static long result(long them, long me) {
-		if (them == me) {
-			return 3 + me;
+	private static int colorCounter(String color, String game) {
+		int count = 0;
+		Matcher matcher = Pattern.compile("(\\d+) " + color).matcher(game);
+		while (matcher.find()) {
+			count += Integer.valueOf(matcher.group(1));
 		}
 
-		if (them == 1) {
-			if (me == 2) {
-				return 6 + me;
-			} else {
-				return me;
-			}
-		}
-
-		if (them == 2) {
-			if (me == 3) {
-				return 6 + me;
-			} else {
-				return me;
-			}
-		}
-		
-		if (them == 3) {
-			if (me == 1) {
-				return 6 + me;
-			} else {
-				return me;
-			}
-		}
-
-		throw new IllegalStateException();
+		return count;
 	}
 
 }
