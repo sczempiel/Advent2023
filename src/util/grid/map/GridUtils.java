@@ -1,5 +1,6 @@
 package util.grid.map;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,17 @@ import java.util.function.Function;
 import util.Tuple;
 
 public class GridUtils {
+
+	public static Comparator<Tuple<Integer, Integer>> COORDINATE_COMPARATOR = (c1, c2) -> {
+		int result = Integer.compare(c1.getLeft(), c2.getLeft());
+
+		if (result == 0) {
+			return Integer.compare(c1.getRight(), c2.getRight());
+		}
+
+		return result;
+	};
+
 	public static <T> String print(Map<Tuple<Integer, Integer>, T> map, Function<T, String> printValue) {
 		Integer smallestY = null;
 		Integer biggestY = null;
@@ -78,12 +90,12 @@ public class GridUtils {
 
 	}
 
-	public static <T> boolean matchSurrounding(Tuple<Integer, Integer> point, Map<Tuple<Integer, Integer>, T> grid,
+	public static <T> boolean matchAllSurrounding(Tuple<Integer, Integer> point, Map<Tuple<Integer, Integer>, T> grid,
 			BiPredicate<T, T> matcher) {
-		return matchSurrounding(point.getLeft(), point.getRight(), grid, matcher);
+		return matchAllSurrounding(point.getLeft(), point.getRight(), grid, matcher);
 	}
 
-	public static <T> boolean matchSurrounding(int y, int x, Map<Tuple<Integer, Integer>, T> grid,
+	public static <T> boolean matchAllSurrounding(int y, int x, Map<Tuple<Integer, Integer>, T> grid,
 			BiPredicate<T, T> matcher) {
 		T value = grid.get(Tuple.of(y, x));
 
@@ -96,10 +108,28 @@ public class GridUtils {
 		matches = matches && matcher.test(value, grid.get(Tuple.of(y, x + 1)));
 		matches = matches && matcher.test(value, grid.get(Tuple.of(y + 1, x - 1)));
 		matches = matches && matcher.test(value, grid.get(Tuple.of(y + 1, x)));
-		matches = matches && matcher.test(value, grid.get(Tuple.of(y + 1, x + 1)));
+		return matches && matcher.test(value, grid.get(Tuple.of(y + 1, x + 1)));
+	}
 
-		return matches;
+	public static <T> boolean matchAnySurrounding(Tuple<Integer, Integer> point, Map<Tuple<Integer, Integer>, T> grid,
+			BiPredicate<T, T> matcher) {
+		return matchAnySurrounding(point.getLeft(), point.getRight(), grid, matcher);
+	}
 
+	public static <T> boolean matchAnySurrounding(int y, int x, Map<Tuple<Integer, Integer>, T> grid,
+			BiPredicate<T, T> matcher) {
+		T value = grid.get(Tuple.of(y, x));
+
+		boolean matches = false;
+
+		matches = matches || matcher.test(value, grid.get(Tuple.of(y - 1, x - 1)));
+		matches = matches || matcher.test(value, grid.get(Tuple.of(y - 1, x)));
+		matches = matches || matcher.test(value, grid.get(Tuple.of(y - 1, x + 1)));
+		matches = matches || matcher.test(value, grid.get(Tuple.of(y, x - 1)));
+		matches = matches || matcher.test(value, grid.get(Tuple.of(y, x + 1)));
+		matches = matches || matcher.test(value, grid.get(Tuple.of(y + 1, x - 1)));
+		matches = matches || matcher.test(value, grid.get(Tuple.of(y + 1, x)));
+		return matches || matcher.test(value, grid.get(Tuple.of(y + 1, x + 1)));
 	}
 
 	public static void consumeSurrounding(Tuple<Integer, Integer> point, Consumer<Tuple<Integer, Integer>> consumer) {
