@@ -24,28 +24,6 @@ public class Day4Task2Main {
 			return having;
 		}).map(List::size).collect(Collectors.toList());
 
-		System.out.println("stack " + stack);
-
-//		for (ListIterator<Integer> it = stack.listIterator(); it.hasNext();) {
-//			Integer card = it.next();
-//
-//			System.out.println("draw " + card);
-//
-//			List<Integer> toAdd = new ArrayList<>();
-//			while (card > 0 && it.hasNext()) {
-//				Integer nextCard = it.next();
-//				toAdd.add(nextCard);
-//				card--;
-//			}
-//
-//			System.out.println(toAdd);
-//
-//			toAdd.forEach(a -> it.previous());
-//			toAdd.forEach(it::add);
-//
-//			System.out.println("stack " + stack);
-//		}
-
 		int result = scratch(0, stack.size());
 		result += stack.size();
 
