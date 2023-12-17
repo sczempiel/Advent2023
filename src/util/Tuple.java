@@ -61,7 +61,7 @@ public class Tuple<L, R> {
 
 	@Override
 	public String toString() {
-		return "Touple [left=" + this.left + ", right=" + this.right + "]";
+		return "Tuple [left=" + this.left + ", right=" + this.right + "]";
 	}
 
 }

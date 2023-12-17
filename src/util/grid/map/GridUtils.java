@@ -30,8 +30,8 @@ public class GridUtils {
 
 		for (Tuple<Integer, Integer> pos : map.keySet()) {
 
-			int y = pos.getRight();
-			int x = pos.getLeft();
+			int y = pos.getLeft();
+			int x = pos.getRight();
 
 			if (smallestY == null || y < smallestY) {
 				smallestY = y;
@@ -54,7 +54,7 @@ public class GridUtils {
 
 		for (int y = smallestY; y <= biggestY; y++) {
 			for (int x = smallestX; x <= biggestX; x++) {
-				sb.append(printValue.apply(map.get(Tuple.of(x, y))));
+				sb.append(printValue.apply(map.get(Tuple.of(y, x))));
 			}
 
 			if (y < biggestY) {
